@@ -2,6 +2,7 @@ package tk.dqmino.bedtime.listener;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.ContainerChest;
@@ -47,17 +48,22 @@ public class InventoryDrawingListener {
         if (lineIndicatingAuctionState == null || !lineIndicatingAuctionState.contains("Can buy"))
             return;
 
+        final double size = BedTime.getConfig().getSize();
+        final int x = BedTime.getConfig().getX();
+        final int y = BedTime.getConfig().getY();
+        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+
+        if (lineIndicatingAuctionState.contains("Soon")) {
+            write(EnumChatFormatting.YELLOW + "Soon!!", size, x, y, event.gui, fontRenderer);
+            return;
+        }
+
         final int timeLeftToBuy = Integer.parseInt(lineIndicatingAuctionState
                 .replaceAll("[\\D]", ""));
-
-        final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
         String whatToWrite;
 
         final EnumChatFormatting color = timeLeftToBuy > 6 ? EnumChatFormatting.GREEN : EnumChatFormatting.DARK_RED;
-        final double size = BedTime.getConfig().getSize();
-        final int x = BedTime.getConfig().getX();
-        final int y = BedTime.getConfig().getY();
 
         if (String.valueOf(timeLeftToBuy).length() >= 3) {
             whatToWrite = color + String.valueOf(timeLeftToBuy).substring(1, 3) + "s";
@@ -65,10 +71,14 @@ public class InventoryDrawingListener {
             whatToWrite = color + String.valueOf(timeLeftToBuy) + "s";
         }
 
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(size, size, 1.0);
-        event.gui.drawString(fontRenderer, whatToWrite, x, y, Integer.MAX_VALUE);
-        GlStateManager.popMatrix();
+        write(whatToWrite, size, x, y, event.gui, fontRenderer);
     }
 
+    private void write(String whatToWrite, double size,
+                       int x, int y, GuiScreen gui, FontRenderer fontRenderer) {
+        GlStateManager.pushMatrix();
+        GlStateManager.scale(size, size, 1.0);
+        gui.drawString(fontRenderer, whatToWrite, x, y, Integer.MAX_VALUE);
+        GlStateManager.popMatrix();
+    }
 }
