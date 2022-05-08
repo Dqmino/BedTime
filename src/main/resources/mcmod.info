@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "bedtime",
+    "name": "Bed Time",
+    "description": "BIN Auction Timer Mod",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "Domino"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]
