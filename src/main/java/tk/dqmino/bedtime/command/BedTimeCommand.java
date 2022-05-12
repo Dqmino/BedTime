@@ -1,13 +1,23 @@
 package tk.dqmino.bedtime.command;
 
 import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import tk.dqmino.bedtime.BedTime;
+import tk.dqmino.bedtime.Serializer;
+import tk.dqmino.bedtime.config.Configuration;
 
 public class BedTimeCommand extends CommandBase {
+
+    private final Configuration config;
+    private final Serializer serializer;
+
+    public BedTimeCommand(Configuration config, Serializer serializer) {
+        this.config = config;
+        this.serializer = serializer;
+    }
+
     @Override
     public String getCommandName() {
         return "bedtime";
@@ -24,7 +34,7 @@ public class BedTimeCommand extends CommandBase {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+    public void processCommand(ICommandSender sender, String[] args) {
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
             sendHelpMessage(sender);
             return;
@@ -34,15 +44,15 @@ public class BedTimeCommand extends CommandBase {
         if (args.length < 2) {
             // no value
             if (args[0].equalsIgnoreCase("on")) {
-                BedTime.getConfig().setEnable(true);
-                BedTime.serializeConfig();
+                config.setEnable(true);
+                serializer.serialize();
                 sender.addChatMessage(new ChatComponentText(BedTime.PREFIX + EnumChatFormatting.GREEN
                         + "Enabled Bed Timer"));
                 return;
             }
             if (args[0].equalsIgnoreCase("off")) {
-                BedTime.getConfig().setEnable(false);
-                BedTime.serializeConfig();
+                config.setEnable(false);
+                serializer.serialize();
                 sender.addChatMessage(new ChatComponentText(BedTime.PREFIX + EnumChatFormatting.GREEN
                         + "Disabled Bed Timer"));
                 return;
@@ -56,21 +66,20 @@ public class BedTimeCommand extends CommandBase {
         try {
             switch (setting) {
                 case "x":
-                    BedTime.getConfig().setX(Integer.parseInt(valueToSet));
-                    BedTime.serializeConfig();
+                    config.setX(Integer.parseInt(valueToSet));
+                    serializer.serialize();
                     sender.addChatMessage(new ChatComponentText(BedTime.PREFIX + EnumChatFormatting.GREEN
                             + "Set X Coordinate to " + valueToSet));
                     break;
                 case "y":
 
-                    BedTime.getConfig().setY(Integer.parseInt(valueToSet));
-                    BedTime.serializeConfig();
+                    config.setY(Integer.parseInt(valueToSet));
+                    serializer.serialize();
                     sender.addChatMessage(new ChatComponentText(BedTime.PREFIX + EnumChatFormatting.GREEN
                             + "Set Y Coordinate to " + valueToSet));
                     break;
                 case "size":
-                    BedTime.getConfig().setSize(Double.parseDouble(valueToSet));
-                    BedTime.serializeConfig();
+                    config.setSize(Double.parseDouble(valueToSet));
                     sender.addChatMessage(new ChatComponentText(BedTime.PREFIX + EnumChatFormatting.GREEN
                             + "Set Font Size to " + valueToSet));
                     break;

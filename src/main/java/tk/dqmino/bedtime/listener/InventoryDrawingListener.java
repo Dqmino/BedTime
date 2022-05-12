@@ -10,16 +10,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import tk.dqmino.bedtime.BedTime;
+import tk.dqmino.bedtime.config.Configuration;
 import tk.dqmino.bedtime.viewer.impl.LoreViewer;
 
 import java.util.ArrayList;
 
 public class InventoryDrawingListener {
 
+    private final Configuration config;
+
+    public InventoryDrawingListener(Configuration config) {
+        this.config = config;
+    }
+
     @SubscribeEvent
     public void onGuiDraw(final GuiScreenEvent.DrawScreenEvent.Post event) {
-        if (!BedTime.getConfig().isModEnabled()) return;
+        if (!config.isModEnabled()) return;
         if (!(event.gui instanceof GuiChest)) return;
 
         final ContainerChest container = (ContainerChest) ((GuiChest) event.gui).inventorySlots;
@@ -48,9 +54,9 @@ public class InventoryDrawingListener {
         if (lineIndicatingAuctionState == null || !lineIndicatingAuctionState.contains("Can buy"))
             return;
 
-        final double size = BedTime.getConfig().getSize();
-        final int x = BedTime.getConfig().getX();
-        final int y = BedTime.getConfig().getY();
+        final double size = config.getSize();
+        final int x = config.getX();
+        final int y = config.getY();
         final FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
         if (lineIndicatingAuctionState.contains("Soon")) {

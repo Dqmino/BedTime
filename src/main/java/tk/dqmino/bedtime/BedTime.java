@@ -27,32 +27,15 @@ public class BedTime {
     public static final String VERSION = "1.0";
     public static final String PREFIX = EnumChatFormatting.GOLD + "Bed" + EnumChatFormatting.RED + "Time>>> " +
             EnumChatFormatting.RESET;
-    private static Configuration config;
-    private static Gson gson;
-    private static File configFile;
-    private static ExecutorService executorService;
+    private Configuration config;
+    private Gson gson;
+    private File configFile;
+    private ExecutorService executorService;
 
-    public static void serializeConfig() {
-        executorService.submit(() -> {
-            try (FileWriter myWriter = new FileWriter(configFile)) {
-                myWriter.write(Configuration.toSerialized(config, gson));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    public static Configuration getConfig() {
-        return config;
-    }
-
-    public static ExecutorService getExecutorService() {
-        return executorService;
-    }
 
     @EventHandler
     public void preinit(FMLPreInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(new InventoryDrawingListener());
+        MinecraftForge.EVENT_BUS.register(new InventoryDrawingListener(config));
     }
 
     @EventHandler
@@ -75,6 +58,10 @@ public class BedTime {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ClientCommandHandler.instance.registerCommand(new BedTimeCommand());
+        ClientCommandHandler.instance.registerCommand(new BedTimeCommand(config,
+                new SimpleConfigurationSerializer(executorService, config, configFile, gson)
+        ));
     }
+
+
 }
